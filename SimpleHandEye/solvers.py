@@ -1,4 +1,4 @@
-import opencv as cv 
+import cv2 as cv 
 import numpy as np
 
 class OpenCVSolver:
@@ -29,8 +29,8 @@ class OpenCVSolver:
         '''
         assert len(A) == len(B), "A and B must have the same length"
         assert len(A) >= 3, "A and B must have at least 3 elements"
-        A_rot_vecs = [cv.Rodrigues(A[i][:3,:3])[0] for i in range(len(A))]
-        B_rot_vecs = [cv.Rodrigues(B[i][:3,:3])[0] for i in range(len(B))]
+        A_rot_vecs = [A[i][:3,:3] for i in range(len(A))]
+        B_rot_vecs = [B[i][:3,:3] for i in range(len(B))]
         A_trans_vecs = [A[i][:3,3] for i in range(len(A))]
         B_trans_vecs = [B[i][:3,3] for i in range(len(B))]
         if self.method is None:
@@ -41,10 +41,10 @@ class OpenCVSolver:
                                                             B_rot_vecs, B_trans_vecs, method=self.method)
         X = np.eye(4)
         Y = np.eye(4)
-        X[:3,:3] = cv.Rodrigues(X_R)[0]
-        X[:3,3] = X_t
-        Y[:3,:3] = cv.Rodrigues(Y_R)[0]
-        Y[:3,3] = Y_t
+        X[:3,:3] = X_R
+        X[:3,3] = X_t.squeeze()
+        Y[:3,:3] = Y_R
+        Y[:3,3] = Y_t.squeeze()
         return X, Y
     
     def solveAXXB(self, base_T_gripper:list, cam_T_target: list):
@@ -53,10 +53,10 @@ class OpenCVSolver:
         B: list of 4x4 transformation matrices
         return: 4x4 solution transformation matrix X
         '''
-        assert len(A) == len(B), "A and B must have the same length"
-        assert len(A) >= 3, "A and B must have at least 3 elements"
-        base_R_gripper = [cv.Rodrigues(base_T_gripper[i][:3,:3])[0] for i in range(len(base_T_gripper))]
-        cam_R_target = [cv.Rodrigues(cam_T_target[i][:3,:3])[0] for i in range(len(base_T_gripper))]
+        assert len(base_T_gripper) == len(cam_T_target), "A and B must have the same length"
+        assert len(base_T_gripper) >= 3, "A and B must have at least 3 elements"
+        base_R_gripper = [base_T_gripper[i][:3,:3] for i in range(len(base_T_gripper))]
+        cam_R_target = [cam_T_target[i][:3,:3] for i in range(len(base_T_gripper))]
         base_t_gripper = [base_T_gripper[i][:3,3] for i in range(len(base_T_gripper))]
         cam_t_target = [cam_T_target[i][:3,3] for i in range(len(base_T_gripper))]
         if self.method is None:
@@ -67,6 +67,6 @@ class OpenCVSolver:
                                                     cam_R_target, cam_t_target, method=self.method)
         
         gripper_T_cam = np.eye(4)
-        gripper_T_cam[:3,:3] = cv.Rodrigues(gripper_R_cam)[0]
-        gripper_T_cam[:3,3] = gripper_t_cam
+        gripper_T_cam[:3,:3] = gripper_R_cam
+        gripper_T_cam[:3,3] = gripper_t_cam.squeeze()
         return gripper_T_cam

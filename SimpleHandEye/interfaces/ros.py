@@ -64,7 +64,7 @@ class ROSTFInterface(BasePoseInterface):
 
     def getPose(self):
         if self.T is not None:
-            return self.stamp, self.T
+            return self.T
         else:
             return None
     

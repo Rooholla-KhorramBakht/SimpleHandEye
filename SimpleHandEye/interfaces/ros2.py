@@ -41,7 +41,7 @@ class ROS2TFInterface(BasePoseInterface, Node):
         if self.T is None:
             return None
         else:
-            return self.T, self.stamp
+            return self.T
         
     def close(self):
         self.running = False
