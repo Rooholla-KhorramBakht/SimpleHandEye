@@ -151,3 +151,20 @@ class ApriltagTracker(BasePoseInterface):
             return T
         else:
             return None
+        
+    def getPoseAndCorners(self, img, tag_id):
+        '''
+        Get the pose of tag with specific ID.
+        Args:
+            img (numpy.ndarray): The input image to be processed.
+            tag_id (int): The ID of the AprilTag to get the pose of.
+        Returns:
+            T (numpy.ndarray): The pose of the tag and None if not found
+        '''
+        if self.distortion_coeffs is not None:
+            img = self.undistortImage(img)
+        self.process(img)
+        if tag_id in self.detected_ids:
+            return self.getTag(tag_id)
+        else:
+            return None
