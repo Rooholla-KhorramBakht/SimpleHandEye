@@ -1,0 +1,5 @@
+<launch>
+  <!-- The transformation matrix is represented in the form of translation and quaternion -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="camera_broadcaster"
+      args="0.061559612620600904 3.1481456389730695 1.2537875763874091 -0.3233689749071787 0.718186944899347 -0.5481789702269583 0.28131803149555556 vicon/world camera" />
+</launch>

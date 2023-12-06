@@ -1,5 +1,4 @@
 import threading
-
 import numpy as np
 import rospy
 import tf
@@ -14,7 +13,7 @@ def terminateRosNode():
     rospy.signal_shutdown("Node closed by user")
 
 
-def initRosNode(node_name="b1py_node"):
+def initRosNode(node_name="simplehandeye_node"):
     """
     Initialize a ROS node within the current python process.
 
@@ -79,12 +78,15 @@ class ROSTFInterface(BasePoseInterface):
                 (trans, rot) = self.tf_listener.lookupTransform(
                     self.parent_frame, self.child_frame, rospy.Time(0)
                 )
+                if trans is not None and rot is not None:
+                    # Update the rotation part of the homogeneous transformation matrix
+                    self.T = np.eye(4)
+                    self.T[:3, :3] = transformations.quaternion_matrix(rot)[:3, :3]
 
-                # Update the rotation part of the homogeneous transformation matrix
-                self.T[:3, :3] = transformations.quaternion_matrix(rot)[:3, :3]
-
-                # Update the translation part of the homogeneous transformation matrix
-                self.T[:3, 3] = trans
+                    # Update the translation part of the homogeneous transformation matrix
+                    self.T[:3, 3] = trans
+                else:
+                    self.T = None
 
                 # If a callback is provided, call it
                 if self.callback:
@@ -105,3 +107,48 @@ class ROSTFInterface(BasePoseInterface):
         """
         self.stop_thread = True
         self.thread.join()
+
+
+class ROSTFPublisher:
+    """
+    This class allows users to publish ROS TF messages to describe the transformation
+    between a parent and child frame. The pose is represented as a 4x4 homogeneous
+    transformation matrix.
+
+    Attributes:
+        parent_frame (str): The name of the parent frame.
+        child_frame (str): The name of the child frame.
+        broadcaster (tf.TransformBroadcaster): The TF broadcaster used for publishing TFs.
+    """
+
+    def __init__(self, parent_frame, child_frame):
+        """
+        Initialize the TF publisher.
+
+        Parameters:
+            parent_frame (str): The name of the parent frame.
+            child_frame (str): The name of the child frame.
+        """
+        self.parent_frame = parent_frame
+        self.child_frame = child_frame
+
+        # Initialize the TF broadcaster
+        self.broadcaster = tf.TransformBroadcaster()
+
+    def publish(self, T):
+        """
+        Publishes the transformation matrix as a TF message.
+
+        Parameters:
+            T (ndarray): 4x4 homogeneous transformation matrix.
+        """
+        # Extract translation
+        trans = T[:3, 3]
+
+        # Extract rotation and convert to quaternion
+        rot = transformations.quaternion_from_matrix(T)
+
+        # Publish the TF
+        self.broadcaster.sendTransform(
+            trans, rot, rospy.Time.now(), self.child_frame, self.parent_frame
+        )
