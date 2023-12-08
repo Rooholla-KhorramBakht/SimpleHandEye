@@ -49,3 +49,76 @@ In this example, the first pose tracking system is the Vicon which tracks the po
 <p align="center">
   <img src="doc/multi_camera_extrinsics.png" alt="image" width="75%" height="auto"/>
 </p>
+
+#### Tracking $\mathbf{{}^{body}T_{marker}}$ :
+To track the relative pose between the marker frame installed on the board and the body frame installed on the robot, we use the ROS2/ROS1 interface to read the TF messages published by vicon-bridge node running in a separate terminal. Instantiate the pose listener as follows:
+
+**For ROS2:**
+```python
+from SimpleHandEye.interfaces.utils import addFoxyPath
+addFoxyPath('/opt/ros/foxy')
+from SimpleHandEye.interfaces.ros2 import ROS2TFInterface
+import rclpy
+
+rclpy.init()    
+marker_pose_listener = ROS2TFInterface('vicon/body', 'vicon/marker')
+```
+**For ROS:**
+
+```python
+from SimpleHandEye.interfaces.utils import addNoeticPath
+addNoeticPath('/opt/ros/noetic')
+from SimpleHandEye.interfaces.ros import ROSTFInterface, initRosNode
+
+initRosNode()
+marker_pose_listener = ROSTFInterface('vicon/body', 'vicon/marker')
+```
+
+Test the interface and maker sure you can read the pose from Vicon:
+
+```python
+marker_pose_listener.getPose()
+```
+#### Tracking $\mathbf{{}^{cam1}T_{tag}}$ :
+
+In this example, we use a Realsense camera so first we need to instantiate our Realsense camera wrapper class to read images and camera parameters:
+
+```python
+from SimpleHandEye.interfaces.cameras import RealSenseCamera
+import cv2
+
+def showImage(color_frame, depth_frame, ir1_frame, ir2_frame):
+    cv2.imshow('image', color_frame)
+    cv2.waitKey(33)
+
+camera = RealSenseCamera(callback_fn=showImage)
+
+intrinsics_params = camera.getIntrinsics()
+K = intrinsics_params['RGB']['K']
+D = intrinsics_params['RGB']['D']
+```
+
+After running above, a new window pops up with a live stream from the camera. We can access to the latest images through:
+
+```python
+img = camera.color_frame
+```
+**Note**: In case the image was available in the form of ROS messages, we could have used our ROS2/ROS image listener classes.
+
+Finally, to track the pose of the tag, we can use our Apriltag tracker class. We could also listen to TF messages published by any kind of third-party trackers through ROS. 
+
+```python
+from SimpleHandEye.interfaces.apriltag import ApriltagTracker
+
+tag_pose_tracker = ApriltagTracker(tag_size=0.172, # put your tag size here
+                          intrinsic_matrix=K,
+                          distortion_coeffs=D)
+```
+
+We can query the pose of a tag with arbitrary ID as simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
+
+```python
+tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
+```
+#### Formulating the Problem and Collecting Data
+
