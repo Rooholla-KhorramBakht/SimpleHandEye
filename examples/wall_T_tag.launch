@@ -2,4 +2,7 @@
   <!-- The transformation matrix is represented in the form of translation and quaternion -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="tag_broadcaster"
       args="-0.2019434358186704 0.0646850279401046 0.220047116567537 -0.5658834592613979 -0.4671125918024927 0.5965597966135423 -0.3251125131063403 vicon/wall/wall tag" />
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="wall_broadcaster"
+      args="0.0 0.0 0.0 0.707107 -0.707107 0.0 0.0 tag wall" />
 </launch>
