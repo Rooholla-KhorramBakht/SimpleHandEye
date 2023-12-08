@@ -11,7 +11,7 @@ This tool is meant to be hardware independent, easy to use, and completely Pytho
 - A class for performing nonlinear optimization for minimizing parameters that minimize reprojection error (TODO) 
 - Simple Python classes for querying ROS and ROS2 TF messages. 
 - Simple Apriltag and Chessboard pose estimation classes.
-- Classes for reading images from Intel Realsense (based on pyrealsense2), UVC USB cameras (TODO), and ROS/ROS2 image topics (TODO)
+- Classes for reading images from Intel Realsense (based on pyrealsense2), UVC USB cameras, and ROS/ROS2 image topics.
 
 ## Installation
 
