@@ -77,7 +77,7 @@ marker_pose_listener = ROSTFInterface('vicon/body', 'vicon/marker')
 Test the interface and maker sure you can read the pose from Vicon:
 
 ```python
-marker_pose_listener.getPose()
+body_T_marker = marker_pose_listener.getPose()
 ```
 #### Tracking $\mathbf{{}^{cam1}T_{tag}}$ :
 
@@ -118,7 +118,7 @@ tag_pose_tracker = ApriltagTracker(tag_size=0.172, # put your tag size here
 We can query the pose of a tag with arbitrary ID as simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
 
 ```python
-tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
+cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 ```
 **Note:** We also could have listened to TF messages published by any kind of third-party trackers through ROS. 
 #### Formulating the Problem and Collecting Data
