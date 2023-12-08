@@ -122,4 +122,72 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 ```
 **Note:** We also could have listened to TF messages published by any kind of third-party trackers through ROS. 
 #### Formulating the Problem and Collecting Data
+The kinematic look in this problem can be written as:
 
+$${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{body} = \mathbf{I}_{4\times4}$$
+
+$${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} = {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}$$
+
+If we define $A = {}^{body}\mathbf{T}_{marker}, \ X={}^{marker}\mathbf{T}_{tag}, \  Y = {}^{body}\mathbf{T}_{camera}, \ \times {}^{camera}\mathbf{T}_{tag}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
+
+```python 
+from SimpleHandEye.solvers import OpenCVSolver
+solver = OpenCVSolver(type='AX=YB)
+```
+
+Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter notebook UI or any tool you want to collect the data and compute the results:
+
+```python
+import ipywidgets as widgets
+import numpy as np
+from IPython.display import display
+from pprint import pprint
+from IPython.display import clear_output
+np.set_printoptions(suppress=True, precision=3)
+
+# The dataset
+A_list = []
+B_list = []
+apriltag_info = []
+apriltag_imgs_raw = []
+apriltag_imgs_udist = []
+def on_sample_clicked(b):
+    A = marker_pose_listener.getPose()
+    img = camera.color_frame
+    info = tag_pose_tracker.getPoseAndCorners(img, tag_id=0)
+    B = info['pose']
+    apriltag_info.append(info)
+    apriltag_imgs_raw.append(img)
+    apriltag_imgs_udist.append(tracker.undistortImage(img))
+    print("A=")
+    pprint(A)
+    print("B=")
+    pprint(B)
+    # if A is not None and B is not None:
+    A_list.append(A)
+    B_list.append(B)
+    print("*************")
+
+def on_compute_clicked(b):
+    try:
+        X,Y = solver.solve(A_list, B_list)
+        clear_output(wait=True)
+        print("X=")
+        pprint(X)
+        print("Y=")
+        pprint(Y)
+    except:
+        print("Bad dataset, please record again")
+        A_list.clear()
+        B_list.clear()
+        
+
+sample_button = widgets.Button(description="Sample")
+compute_button = widgets.Button(description="Compute")
+
+sample_button.on_click(on_sample_clicked)
+compute_button.on_click(on_compute_clicked)
+display(sample_button)
+display(compute_button)
+```
+At the end, the solution is printed out to the output. You can use the helper exporter classes in `SimpleHandEye.exporters` to save the results in various formats (TODO: YAML, ROS2, and pickle output formats to be added)
