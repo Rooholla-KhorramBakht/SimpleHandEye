@@ -13,3 +13,4 @@ This tool is meant to be hardware independent, easy to use, and completely Pytho
 - Simple Apriltag and Chessboard pose estimation classes.
 - Classes for reading images from Intel Realsense (based on pyrealsense2) and UVC USB cameras (TODO)
 
+# Installation
