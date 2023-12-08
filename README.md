@@ -11,3 +11,23 @@ SimpleHandEye is an easy-to-use and hardware-independent Python package for find
 - Simple Apriltag and Chessboard pose estimation classes.
 - Classes for reading images from Intel Realsense (based on pyrealsense2) and UVC USB cameras (TODO)
 
+## Installation
+
+Simply install through pip (TODO):
+
+```bash
+pip install simple-handeye
+```
+
+or clone and install as follows:
+
+```bash
+git clone https://github.com/Rooholla-KhorramBakht/SimpleHandEye.git
+cd SimpleHandEye
+pip install -e .
+```
+## How To Use?
+
+Here, we provide some common applications of this package. However, this package may be used for any kind of pose sensing systems.
+
+### Hand On Hand Calibration
