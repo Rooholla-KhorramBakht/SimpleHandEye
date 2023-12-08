@@ -105,7 +105,7 @@ img = camera.color_frame
 ```
 **Note**: In case the image was available in the form of ROS messages, we could have used our ROS2/ROS image listener classes.
 
-Finally, to track the pose of the tag, we can use our Apriltag tracker class. We could also listen to TF messages published by any kind of third-party trackers through ROS. 
+Finally, to track the pose of the tag, we can use our Apriltag tracker class. 
 
 ```python
 from SimpleHandEye.interfaces.apriltag import ApriltagTracker
@@ -120,5 +120,6 @@ We can query the pose of a tag with arbitrary ID as simply by giving the image f
 ```python
 tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 ```
+**Note:** We also could have listened to TF messages published by any kind of third-party trackers through ROS. 
 #### Formulating the Problem and Collecting Data
 
