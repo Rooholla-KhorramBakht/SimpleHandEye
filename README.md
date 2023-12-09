@@ -284,10 +284,10 @@ If we define:
 
 ```math
 \bagin{align*}
-  A &= {}^{base}\mathbf{T}_{hand}\\
-  X &= {}^{hand}\mathbf{T}_{cam} \\  
-  Y &= {}^{base}\mathbf{T}_{tag} \\ 
-  B &= {}^{tag}\mathbf{T}_{cam}
+  &A = {}^{base}\mathbf{T}_{hand}\\
+  &X = {}^{hand}\mathbf{T}_{cam} \\  
+  &Y = {}^{base}\mathbf{T}_{tag} \\ 
+  &B = {}^{tag}\mathbf{T}_{cam}
 \end{align*}
 ```
 
