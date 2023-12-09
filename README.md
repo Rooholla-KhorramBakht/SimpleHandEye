@@ -126,7 +126,7 @@ The kinematic loop in this problem can be written as:
 \begin{align*}
 &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{base} = \mathbf{I}_{4\times4}\\
 &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{tag} = {}^{cam}\mathbf{T}_{tag} \times {}^{base}\mathbf{T}_{cam}
-\end{algin}
+\end{align*}
 ```
 If we define:
 ```math
@@ -135,7 +135,7 @@ If we define:
 &X = {}^{hand}\mathbf{T}_{tag}, \\
 &Y = {}^{base}\mathbf{T}_{cam}, \\
 &B = {}^{cam}\mathbf{T}_{tag}
-\end{algin*}
+\end{align*}
 ```
 we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
 
