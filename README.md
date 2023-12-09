@@ -434,9 +434,9 @@ The kinematic look in this problem can be written as:
 If we define:
 ```math
 \begin{align*}
-  A &= {}^{body}\mathbf{T}_{marker}
-  X &={}^{marker}\mathbf{T}_{tag}
-  Y &= {}^{body}\mathbf{T}_{camera}
+  A &= {}^{body}\mathbf{T}_{marker}\\
+  X &={}^{marker}\mathbf{T}_{tag}\\
+  Y &= {}^{body}\mathbf{T}_{camera}\\
   B &= {}^{camera}\mathbf{T}_{tag}
 \end{align*}
 ``` we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
