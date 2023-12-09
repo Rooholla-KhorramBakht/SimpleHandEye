@@ -426,7 +426,7 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 #### Formulating the Problem and Collecting Data
 The kinematic look in this problem can be written as:
 ```math
-\begin{algin*}
+\begin{align*}
 {}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} &\times {}^{tag}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{body} = \mathbf{I}_{4\times4} \\
 {}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} &= {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}
 \end{align*}
