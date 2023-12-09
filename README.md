@@ -366,9 +366,6 @@ display(compute_button)
 ```
 At the end, the solution is printed out to the output. You can use the helper exporter classes in `SimpleHandEye.exporters` to save the results in various formats.
 
-### Vicon Marker to Object Extrinsic Calibration
-TODO
-
 ### Vicon-Based Multi-Camera Extrinsic Calibration
 The goal in this example is to find the extrinsic transformation between cameras installed on a robot/autonomous vehicle and the body coordinate frame (or any common coordinate frame). 
 
