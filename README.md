@@ -425,11 +425,10 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 **Note:** We also could have listened to TF messages published by any kind of third-party trackers through ROS. 
 #### Formulating the Problem and Collecting Data
 The kinematic look in this problem can be written as:
-
-$${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{body} = \mathbf{I}_{4\times4}$$
-
-$${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} = {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}$$
-
+```math
+{}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{body} = \mathbf{I}_{4\times4} \\
+{}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} = {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}
+```
 If we define $A = {}^{body}\mathbf{T}_{marker}$, $X={}^{marker}\mathbf{T}_{tag}, \  Y = {}^{body}\mathbf{T}_{camera}, \ \times {}^{camera}\mathbf{T}_{tag}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
