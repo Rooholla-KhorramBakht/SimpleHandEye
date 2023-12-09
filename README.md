@@ -13,7 +13,7 @@ SimpleHandEye is an easy-to-use and hardware-independent Python package for find
 This tool is meant to be hardware independent, easy to use, and completely Pythonic and feature:
 
 - Classes abstracting OpenCV `AX=YB` and `AX=XB` solvers
-- A class for performing nonlinear optimization for minimizing parameters that minimize reprojection error (TODO) 
+- A class for performing nonlinear optimization for minimizing reprojection error (TODO) 
 - Simple Python classes for querying ROS and ROS2 TF messages. 
 - Simple Apriltag and Chessboard pose estimation classes.
 - Classes for reading images from Intel Realsense (based on pyrealsense2), UVC USB cameras, and ROS/ROS2 image topics.
