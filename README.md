@@ -283,7 +283,7 @@ The kinematic look in this problem can be written as:
 If we define:
 
 ```math
-\bagin{align*}
+\begin{align*}
   &A = {}^{base}\mathbf{T}_{hand}\\
   &X = {}^{hand}\mathbf{T}_{cam} \\  
   &Y = {}^{base}\mathbf{T}_{tag} \\ 
