@@ -276,7 +276,7 @@ The kinematic look in this problem can be written as:
 ```math
 \begin{align*}
   &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{base} = \mathbf{I}_{4\times4}\\
-  {}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} = {}^{base}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam}
+  &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} = {}^{base}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam}
 \end{align*}
 ```
 
