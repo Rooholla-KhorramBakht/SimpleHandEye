@@ -439,7 +439,8 @@ If we define:
   Y &= {}^{body}\mathbf{T}_{camera}\\
   B &= {}^{camera}\mathbf{T}_{tag}
 \end{align*}
-``` we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
+```
+we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
