@@ -273,11 +273,25 @@ base_T_hand = getHandPose()
 #### Formulating the Problem and Collecting Data
 The kinematic look in this problem can be written as:
 
-$${}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{base} = \mathbf{I}_{4\times4}$$
+```math
+\begin{align*}
+  &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{base} = \mathbf{I}_{4\times4}\\
+  {}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} = {}^{base}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam}
+\end{align}
+```
 
-$${}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{cam} = {}^{base}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam}$$
+If we define:
 
-If we define $A = {}^{base}\mathbf{T}_{hand}, \ X={}^{hand}\mathbf{T}_{cam}, \  Y = {}^{base}\mathbf{T}_{tag}, \ \times {}^{tag}\mathbf{T}_{cam}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
+```math
+\bagin{align*}
+  A &= {}^{base}\mathbf{T}_{hand}\\
+  X &= {}^{hand}\mathbf{T}_{cam} \\  
+  Y &= {}^{base}\mathbf{T}_{tag} \\ 
+  B &= {}^{tag}\mathbf{T}_{cam}
+\end{align*}
+```
+
+ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
