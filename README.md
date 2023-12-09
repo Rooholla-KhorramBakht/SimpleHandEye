@@ -431,7 +431,15 @@ The kinematic look in this problem can be written as:
 {}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} &= {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}
 \end{align*}
 ```
-If we define ```math A = {}^{body}\mathbf{T}_{marker} ```, $X={}^{marker}\mathbf{T}_{tag}, \  Y = {}^{body}\mathbf{T}_{camera}, \ \times {}^{camera}\mathbf{T}_{tag}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
+If we define:
+```math
+\begin{align*}
+  A &= {}^{body}\mathbf{T}_{marker}
+  X &={}^{marker}\mathbf{T}_{tag}
+  Y &= {}^{body}\mathbf{T}_{camera}
+  B &= {}^{camera}\mathbf{T}_{tag}
+\end{align*}
+``` we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
