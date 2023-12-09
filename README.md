@@ -40,12 +40,12 @@ Here, we provide some common applications of this package. However, this package
 
 ### Eye On Base Calibration
 <p align="center">
-  <img src="doc/eye-on-base.png" alt="image" width="50%" height="auto"/>
+  <img src="doc/eye-on-base.png" alt="image" width="40%" height="auto"/>
 </p>
 
 ### Eye On Hand Calibration
 <p align="center">
-  <img src="doc/eye_on_hand.png" alt="image" width="50%" height="auto"/>
+  <img src="doc/eye_on_hand.png" alt="image" width="40%" height="auto"/>
 </p>
 
 ### Vicon Marker to Object Extrinsic Calibration
