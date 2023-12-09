@@ -3,8 +3,6 @@
   <img src="doc/logo.png" alt="image" width="45%" height="auto"/>
 </p>
 
-#
-
 
 <p align="center">
   <img src="doc/openfig.png" alt="image" width="60%" height="auto"/>
