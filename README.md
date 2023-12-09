@@ -430,7 +430,7 @@ $${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} \times {}^{tag
 
 $${}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} = {}^{body}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{tag}$$
 
-If we define $A = {}^{body}\mathbf{T}_{marker}, \ X={}^{marker}\mathbf{T}_{tag}, \  Y = {}^{body}\mathbf{T}_{camera}, \ \times {}^{camera}\mathbf{T}_{tag}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
+If we define $A = {}^{body}\mathbf{T}_{marker}$, $X={}^{marker}\mathbf{T}_{tag}, \  Y = {}^{body}\mathbf{T}_{camera}, \ \times {}^{camera}\mathbf{T}_{tag}$ we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
