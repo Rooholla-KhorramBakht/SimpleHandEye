@@ -38,7 +38,7 @@ pip install -e .
 Here, we provide some common applications of this package. However, this package may be used based on any kind of pose-sensing system.
 
 
-### Eye On Base Calibration
+### Eye-On-Base Calibration
 The goal in this example is to find the extrinsic transformation between a camera attached to a manipulation table and the base coordinate frame of the robot.
 
 In this example, the first pose tracking system is the end-effector pose computed based on the forward kinematics of the robot which gives the pose of the hand coordinate frame. The other pose sensor is the camera which continuously tracks the pose of an Apriltag/chessboard attached to the end-effector. The overall setup is shown in the following image:
@@ -200,7 +200,7 @@ display(sample_button)
 display(compute_button)
 ```
 At the end, the solution is printed out to the output. You can use the helper exporter classes in `SimpleHandEye.exporters` to save the results in various formats.
-### Eye On Hand Calibration
+### Eye-On-Hand Calibration
 The goal in this example is to find the extrinsic transformation between a camera attached to the end-effector and the end-effector coordinate frame.
 
 In this example, the first pose tracking system is the end-effector pose computed based on the forward kinematics of the robot which gives the pose of the hand coordinate frame. The other pose sensor is the camera which continuously tracks the pose of an Apriltag/chessboard rigidly attached to the manipulation table. The overall setup is shown in the following image:
