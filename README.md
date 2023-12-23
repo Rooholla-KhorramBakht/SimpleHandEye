@@ -1,32 +1,32 @@
-
 <p align="left">
   <img src="doc/logo.png" alt="image" width="45%" height="auto"/>
 </p>
 
 #
 <p align="center">
-  <img src="doc/openfig.png" alt="image" width="60%" height="auto"/>
+  <img src="doc/openfig.png" alt="image" width="75%" height="auto"/>
 </p>
 
 SimpleHandEye is an easy-to-use and hardware-independent Python package for finding the unknown transformation between the world and sensor coordinates of two independent pose tracking systems (e.g. the transformation between the camera and robot gripper or the camera and robot base). 
 
-This tool is meant to be hardware independent, easy to use, and completely Pythonic and feature:
+This tool is meant to be hardware independent, easy to use, and completely Pythonic, and features:
 
 - Classes abstracting OpenCV `AX=YB` and `AX=XB` solvers
-- A class for performing nonlinear optimization for minimizing reprojection error (TODO) 
+- A class for performing nonlinear optimization for minimizing reprojection error (To be added) 
 - Simple Python classes for querying ROS and ROS2 TF messages. 
-- Simple Apriltag and Chessboard pose estimation classes.
+- Simple visual trackers for Apriltags and Chessboard patterns. 
 - Classes for reading images from Intel Realsense (based on pyrealsense2), UVC USB cameras, and ROS/ROS2 image topics.
 
 ## Installation
 
-Simply install through pip (TODO):
+<!-- Simply install through pip (TODO):
 
 ```bash
 pip install simple-handeye
 ```
 
-or clone and install as follows:
+or  -->
+clone and install the library as follows:
 
 ```bash
 git clone https://github.com/Rooholla-KhorramBakht/SimpleHandEye.git
@@ -35,7 +35,7 @@ pip install -e .
 ```
 ## How To Use?
 
-Here, we provide some common applications of this package. However, this package may be used based any kind of pose sensing systems.
+Here, we provide some common applications of this package. However, this package may be used based on any kind of pose-sensing system.
 
 
 ### Eye On Base Calibration
@@ -43,7 +43,7 @@ The goal in this example is to find the extrinsic transformation between a camer
 
 In this example, the first pose tracking system is the end-effector pose computed based on the forward kinematics of the robot which gives the pose of the hand coordinate frame. The other pose sensor is the camera which continuously tracks the pose of an Apriltag/chessboard attached to the end-effector. The overall setup is shown in the following image:
 <p align="center">
-  <img src="doc/eye-on-base.png" alt="image" width="40%" height="auto"/>
+  <img src="doc/eye-on-base.png" alt="image" width="60%" height="auto"/>
 </p>
 
 #### Tracking $\mathbf{{}^{cam}T_{tag}}$ :
@@ -65,7 +65,7 @@ K = intrinsics_params['RGB']['K']
 D = intrinsics_params['RGB']['D']
 ```
 
-After running above, a new window pops up with a live stream from the camera. We can access to the latest images through:
+After running above, a new window pops up with a live stream from the camera. We can access the latest images through:
 
 ```python
 img = camera.color_frame
@@ -82,7 +82,7 @@ tag_pose_tracker = ApriltagTracker(tag_size=0.172, # put your tag size here
                           distortion_coeffs=D)
 ```
 
-We can query the pose of a tag with arbitrary ID as simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
+We can query the pose of a tag with arbitrary ID simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
 
 ```python
 cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
@@ -92,7 +92,7 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 
 To get the end-effector pose, we use [FR3Py](https://github.com/Rooholla-KhorramBakht/FR3Py), a Python library for easy interface to Franka FR3 robots. But you can also use other robotic manipulators and subscribe to their ROS TF messages through `SimpleHandEye.interfaces.ros`. 
 
-Follow through the steps in FR3Py documentation to install the library and run the corresponding C++ driver to communicate with the robot. Then instantiate the python interface as follows:
+Follow through the steps in FR3Py documentation to install the library and run the corresponding C++ driver to communicate with the robot. Then instantiate the Python interface as follows:
 
 ```python
 from FR3Py.robot.interface import FR3Real
@@ -137,14 +137,14 @@ If we define:
 &B = {}^{cam}\mathbf{T}_{tag}
 \end{align*}
 ```
-we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
+we get the standard $AX=YB$ equation. To identify $X, Y$ we have to collect a dataset of $A, B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
 solver = OpenCVSolver(type='AX=YB)
 ```
 
-Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter notebook UI or any tool you want to collect the data and compute the results:
+Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter Notebook UI or any tool you want to collect the data and compute the results:
 
 ```python
 import ipywidgets as widgets
@@ -203,9 +203,9 @@ At the end, the solution is printed out to the output. You can use the helper ex
 ### Eye On Hand Calibration
 The goal in this example is to find the extrinsic transformation between a camera attached to the end-effector and the end-effector coordinate frame.
 
-In this example, the first pose tracking system is the end-effector pose computed based on the forward kinematics of the robot which gives the pose of the hand coordinate frame. The other pose sensor is the camera which continuously tracks the pose of an Apriltag/chessboard rigidly attached to manipulation table. The overall setup is shown in the following image:
+In this example, the first pose tracking system is the end-effector pose computed based on the forward kinematics of the robot which gives the pose of the hand coordinate frame. The other pose sensor is the camera which continuously tracks the pose of an Apriltag/chessboard rigidly attached to the manipulation table. The overall setup is shown in the following image:
 <p align="center">
-  <img src="doc/eye_on_hand.png" alt="image" width="40%" height="auto"/>
+  <img src="doc/eye_on_hand.png" alt="image" width="60%" height="auto"/>
 </p>
 
 #### Tracking $\mathbf{{}^{cam}T_{tag}}$ :
@@ -227,7 +227,7 @@ K = intrinsics_params['RGB']['K']
 D = intrinsics_params['RGB']['D']
 ```
 
-After running above, a new window pops up with a live stream from the camera. We can access to the latest images through:
+After running above, a new window pops up with a live stream from the camera. We can access the latest images through:
 
 ```python
 img = camera.color_frame
@@ -244,7 +244,7 @@ tag_pose_tracker = ApriltagTracker(tag_size=0.172, # put your tag size here
                           distortion_coeffs=D)
 ```
 
-We can query the pose of a tag with arbitrary ID as simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
+We can query the pose of a tag with arbitrary ID simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
 
 ```python
 cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
@@ -254,7 +254,7 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 
 To get the end-effector pose, we use [FR3Py](https://github.com/Rooholla-KhorramBakht/FR3Py), a Python library for easy interface to Franka FR3 robots. But you can also use other robotic manipulators and subscribe to their ROS TF messages through `SimpleHandEye.interfaces.ros`. 
 
-Follow through the steps in FR3Py documentation to install the library and run the corresponding C++ driver to communicate with the robot. Then instantiate the python interface as follows:
+Follow through the steps in FR3Py documentation to install the library and run the corresponding C++ driver to communicate with the robot. Then instantiate the Python interface as follows:
 
 ```python
 from FR3Py.robot.interface import FR3Real
@@ -302,14 +302,14 @@ If we define:
 \end{align*}
 ```
 
- we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
+ we get the standard $AX=YB$ equation. To identify $X, Y$ we have to collect a dataset of $A, B$ poses in which, we move the end-effector in front of the tag throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
 solver = OpenCVSolver(type='AX=YB)
 ```
 
-Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter notebook UI or any tool you want to collect the data and compute the results:
+Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter Notebook UI or any tool you want to collect the data and compute the results:
 
 ```python
 import ipywidgets as widgets
@@ -375,7 +375,7 @@ In this example, the first pose tracking system is the Vicon which tracks the po
 </p>
 
 #### Tracking $\mathbf{{}^{body}T_{marker}}$ :
-To track the relative pose between the marker frame installed on the board and the body frame installed on the robot, we use the ROS2/ROS1 interface to read the TF messages published by vicon-bridge node running in a separate terminal. Instantiate the pose listener as follows:
+To track the relative pose between the marker frame installed on the board and the body frame installed on the robot, we use the ROS2/ROS1 interface to read the TF messages published by the vicon-bridge node running in a separate terminal. Instantiate the pose listener as follows:
 
 **For ROS2:**
 ```python
@@ -398,7 +398,7 @@ initRosNode()
 marker_pose_listener = ROSTFInterface('vicon/body', 'vicon/marker')
 ```
 
-Test the interface and maker sure you can read the pose from Vicon:
+Test the interface and make sure you can read the pose from Vicon:
 
 ```python
 body_T_marker = marker_pose_listener.getPose()
@@ -422,7 +422,7 @@ K = intrinsics_params['RGB']['K']
 D = intrinsics_params['RGB']['D']
 ```
 
-After running above, a new window pops up with a live stream from the camera. We can access to the latest images through:
+After running above, a new window pops up with a live stream from the camera. We can access the latest images through:
 
 ```python
 img = camera.color_frame
@@ -439,7 +439,7 @@ tag_pose_tracker = ApriltagTracker(tag_size=0.172, # put your tag size here
                           distortion_coeffs=D)
 ```
 
-We can query the pose of a tag with arbitrary ID as simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
+We can query the pose of a tag with arbitrary ID simply by giving the image from the camera and the requested ID to the `getPose` method of the tracker:
 
 ```python
 cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
@@ -462,14 +462,14 @@ If we define:
   B &= {}^{camera}\mathbf{T}_{tag}
 \end{align*}
 ```
-we get the standard $AX=YB$ equation. To identify $X,Y$ we have to collect a dataset of $A,B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
+we get the standard $AX=YB$ equation. To identify $X, Y$ we have to collect a dataset of $A, B$ poses in which, we move the board in front of the camera throughout various configurations. To solve the problem, first instantiate the solver:
 
 ```python 
 from SimpleHandEye.solvers import OpenCVSolver
 solver = OpenCVSolver(type='AX=YB)
 ```
 
-Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter notebook UI or any tool you want to collect the data and compute the results:
+Then you need to provide the sampled poses in the form of two lists. You can use the following Jupyter Notebook UI or any tool you want to collect the data and compute the results:
 
 ```python
 import ipywidgets as widgets
