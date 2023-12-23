@@ -1,6 +1,10 @@
 import threading
 import pyrealsense2 as rs
 import numpy as np
+import threading
+import cv2
+import numpy as np
+import yaml
 
 class RealSenseCamera:
     """
@@ -242,3 +246,95 @@ class RealSenseCamera:
                 'cy':cy,
                 'K':K,
                 'D':dist}   
+    
+
+class UVCCamera:
+    """
+    A class for interacting with a UVC cameras.
+
+    Args:
+        fps (int): Frame rate for the camera stream (frames per second).
+        camera_id (int): The ID of the camera (default 0 for the primary camera).
+        yaml_cfg_path (str): Path to a YAML file containing the camera's intrinsic parameters.
+        undistort (bool): Enable or disable undistortion of images.
+
+    Attributes:
+        fps (int): Frame rate for the camera stream.
+        camera_id (int): The ID of the camera.
+        cap (cv2.VideoCapture): OpenCV video capture object.
+        intrinsics (dict): The camera's intrinsic parameters.
+    """
+
+    def __init__(self, fps=30, camera_id=0, yaml_cfg_path=None, undistort = False):
+        self.undistort = undistort
+        self.fps = fps
+        self.camera_id = camera_id
+        self.yaml_cfg_path = yaml_cfg_path
+        self.cap = cv2.VideoCapture(camera_id)
+        self.cap.set(cv2.CAP_PROP_FPS, fps)
+        if yaml_cfg_path:
+            self.intrinsics = self._load_intrinsics(yaml_cfg_path)
+        else:
+            self.intrinsics = None
+        self.color_frame = None
+        # Start the thread for grabbing frames
+        self._stop_event = threading.Event()
+        self._thread = threading.Thread(target=self._run_grab_frames)
+        self._thread.start()
+
+    def _load_intrinsics(self, yaml_cfg_path):
+        """
+        Load intrinsic parameters from a YAML file.
+
+        Args:
+            yaml_cfg_path (str): Path to the YAML file.
+
+        Returns:
+            dict: The intrinsic parameters.
+        """
+        with open(yaml_cfg_path) as file:
+            data = yaml.load(file, Loader=yaml.FullLoader)
+        return data
+
+    def _run_grab_frames(self):
+        """
+        Private method to continuously grab frames in a separate thread.
+        """
+        while not self._stop_event.is_set():
+            ret, frame = self.cap.read()
+            if ret:
+                # Process frame (e.g., undistort)
+                if self.udistort:
+                    frame = self.undistortImage(frame)
+                self.color_frame = frame
+            else:
+                self.color_frame = None
+
+    def undistortImage(self, img):
+        """
+        Undistorts an input image using camera calibration parameters.
+
+        Args:
+            img (numpy.ndarray): The input image to be undistorted.
+
+        Returns:
+            numpy.ndarray: The undistorted image.
+        """
+        if not self.intrinsics:
+            return img  # Return original if no intrinsics provided
+        K = np.array(self.intrinsics['camera_matrix']['data']).reshape(3, 3)
+        D = np.array(self.intrinsics['distortion_coefficients']['data'])
+        h, w = img.shape[:2]
+        new_K, roi = cv2.getOptimalNewCameraMatrix(K, D, (w, h), 1, (w, h))
+        undistorted_img = cv2.undistort(img, K, D, None, new_K)
+        return undistorted_img
+
+    def close(self):
+        """
+        Closes the UVCCamera object, stopping the frame grabbing thread and releasing the camera.
+        """
+        # Stop the thread
+        self._stop_event.set()
+        self._thread.join()
+        # Release the camera
+        self.cap.release()
