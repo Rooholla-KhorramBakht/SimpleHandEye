@@ -371,7 +371,7 @@ The goal in this example is to find the extrinsic transformation between cameras
 
 In this example, the first pose tracking system is the Vicon which tracks the pose of markers corresponding to the body frame and markers that are installed on an Apriltag board. The other pose sensor is the cameras of interest which continuously track the pose of an Apriltag/chessboard. The overall setup is shown in the following image:
 <p align="center">
-  <img src="doc/multi_camera_extrinsics.png" alt="image" width="75%" height="auto"/>
+  <img src="doc/multi_camera_extrinsics.png" alt="image" width="85%" height="auto"/>
 </p>
 
 #### Tracking $\mathbf{{}^{body}T_{marker}}$ :
