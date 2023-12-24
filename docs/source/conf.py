@@ -34,6 +34,7 @@ exclude_patterns = []
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
+html_title = "SimpleHandEye Documentation"
 myst_enable_extensions = [
     "dollarmath",
     "amsmath",
