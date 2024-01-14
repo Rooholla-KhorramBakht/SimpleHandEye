@@ -7,6 +7,9 @@ from scipy.spatial.transform import Rotation as R
 import threading
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
+from rclpy.executors import MultiThreadedExecutor
+import cv2
+import time
 
 class ROS2CameraReader(Node):
     """
@@ -24,95 +27,115 @@ class ROS2CameraReader(Node):
         K (numpy.ndarray): The intrinsic camera matrix.
         D (numpy.ndarray): The distortion coefficients.
     """
-
-    def __init__(self, image_topic, camera_info_topic=None, K=None, D=None):
-        super().__init__('ros2_camera_reader')
-        self.image_topic = image_topic
-        self.camera_info_topic = camera_info_topic
+    def __init__(self, image_topic, node_name, camera_info_topic=None, K=None, D=None):
+        super().__init__(f'{node_name}_camera_reader')
         self.bridge = CvBridge()
         self.color_frame = None
         self.camera_info = None
         self.K = K
         self.D = D
+        self.node_name = node_name
 
-        # Subscribers
-        self.image_subscriber = self.create_subscription(Image, self.image_topic, self.image_callback, 10)
-        if self.camera_info_topic:
-            self.camera_info_subscriber = self.create_subscription(CameraInfo, self.camera_info_topic, self.camera_info_callback, 10)
-        
-        # Start the thread for listening to topics
-        self._stop_event = threading.Event()
-        self._thread = threading.Thread(target=self.spin)
-        self._thread.start()
-
-    def spin(self):
-        while not self._stop_event.is_set() and rclpy.ok():
-            rclpy.spin_once(self)
+        self.image_subscriber = self.create_subscription(Image, image_topic, self.image_callback, 10)
+        if camera_info_topic:
+            self.camera_info_subscriber = self.create_subscription(CameraInfo, camera_info_topic, self.camera_info_callback, 10)
 
     def image_callback(self, msg):
-        """
-        Callback function for the image topic.
-        """
         self.color_frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='passthrough')
 
     def camera_info_callback(self, msg):
-        """
-        Callback function for the camera info topic.
-        """
         self.camera_info = msg
-        self.K = np.array(msg.K).reshape((3, 3))
-        self.D = np.array(msg.D)
+        self.K = np.array(msg.k).reshape((3, 3))
+        self.D = np.array(msg.d)
 
+    def get_image(self):
+        """
+        Returns the latest image frame received from the topic.
+
+        Returns:
+            numpy.ndarray: The latest image frame received from the topic.
+        """
+        return self.color_frame 
+
+    def get_intrinsics(self):
+        """
+        Returns the intrinsic camera matrix.
+
+        Returns:
+            numpy.ndarray: The intrinsic camera matrix.
+        """
+        return {'K': self.K, 'D': self.D}
     def close(self):
-        """
-        Closes the ROS2CameraReader object, stopping the subscriber and the thread.
-        """
-        self._stop_event.set()
-        self._thread.join()
-        self.destroy_subscription(self.image_subscriber)
-        if self.camera_info_topic:
-            self.destroy_subscription(self.camera_info_subscriber)
         self.destroy_node()
-        
 
-class ROS2TFInterface(BasePoseInterface, Node):
-    def __init__(self, parent_name, child_name, node_name='tf2_listener'):
-        Node.__init__(self, node_name)
-        BasePoseInterface.__init__(self)
-        self.node_name = node_name
+
+class ROS2TFInterface(Node):
+
+    def __init__(self, parent_name, child_name, node_name):
+        super().__init__(f'{node_name}_tf2_listener')
         self.parent_name = parent_name
         self.child_name = child_name
         self.tfBuffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tfBuffer, self)
-        self.running = True 
-        self.thread = threading.Thread(target=self.run).start() 
+        self.T = None
+        self.stamp = None
+        self.running = True
+        self.thread = threading.Thread(target=self.update_loop)
+        self.thread.start()
+        self.trans = None
 
-
-    def run(self): 
-        while rclpy.ok() and self.running: 
-            rclpy.spin_once(self)
+    def update_loop(self):
+        while self.running:
             try:
-                trans = self.tfBuffer.lookup_transform(self.parent_name, self.child_name, rclpy.time.Time())
-                # Extract translation and rotation from the transform
-                translation = [trans.transform.translation.x, trans.transform.translation.y, trans.transform.translation.z]
-                rotation = [trans.transform.rotation.w, trans.transform.rotation.x, trans.transform.rotation.y, trans.transform.rotation.z]
-                # Update the rotation part of the homogeneous transformation matrix
-                self.T = np.eye(4)
-                self.T[0:3, 0:3]=R.from_quat(rotation).as_matrix()
-                self.T[:3, 3] = translation
-                self.stamp = trans.header.stamp.nanosec*1e-9 + trans.header.stamp.sec
+                self.trans = self.tfBuffer.lookup_transform(self.parent_name, self.child_name, rclpy.time.Time(), rclpy.time.Duration(seconds=0.1))
             except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
-                self.get_logger().error('Error in lookupTransform: %s' % e)
-                self.T = None
-                self.stamp = None
+                pass
+            time.sleep(0.01)    
 
-    def getPose(self):
-        if self.T is None:
+    def get_pose(self):
+        if self.trans is None:
             return None
         else:
+            translation = [self.trans.transform.translation.x, self.trans.transform.translation.y, self.trans.transform.translation.z]
+            rotation = [self.trans.transform.rotation.x, self.trans.transform.rotation.y, self.trans.transform.rotation.z, self.trans.transform.rotation.w]
+            self.T = np.eye(4)
+            self.T[0:3, 0:3] = R.from_quat(rotation).as_matrix()
+            self.T[:3, 3] = translation
+            self.stamp = self.trans.header.stamp.nanosec * 1e-9 + self.trans.header.stamp.sec
             return self.T
-        
+
     def close(self):
         self.running = False
-        self.thread.join()
+        self.thread.join()  
         self.destroy_node()
+
+class ROS2ExecutorManager:
+    def __init__(self):
+        self.executor = MultiThreadedExecutor()
+        self.nodes = []
+        self.executor_thread = None
+
+    def add_node(self, node: Node):
+        """Add a new node to the executor."""
+        self.nodes.append(node)
+        self.executor.add_node(node)
+
+    def _run_executor(self):
+        try:
+            self.executor.spin()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            self.close()
+
+    def start(self):
+        """Start spinning the nodes in a separate thread."""
+        self.executor_thread = threading.Thread(target=self._run_executor)
+        self.executor_thread.start()
+
+    def close(self):
+        """Terminate all nodes and shutdown rclpy."""
+        for node in self.nodes:
+            node.destroy_node()
+        # if self.executor_thread:
+        #     self.executor_thread.join()
