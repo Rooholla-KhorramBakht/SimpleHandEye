@@ -30,6 +30,7 @@ class AXYBReprojectionOptimizer():
                             tag_p: sf.V3,
                             pix_p: sf.V2,
                             K: sf.Matrix33,
+                            sigma: sf.Scalar,
                             epsilon:sf.Scalar):
         """
         The reprojection residual function
@@ -40,6 +41,7 @@ class AXYBReprojectionOptimizer():
         @param tag_ps: the tag position in the tag frame for each image frame
         @param pix_ps: the measured image points for each image frame
         @param K: the camera intrinsic matrix
+        @param sigma: the measurement uncertainty
         @param epsilon: a small value to avoid division by zero
         @return: the reprojection residual
         """
@@ -55,7 +57,7 @@ class AXYBReprojectionOptimizer():
         
         z_hat = K*(camera_T_tag*sf.V3(tag_p))
         z_hat = z_hat/(z_hat[2]+epsilon)
-        return sf.V1((z_hat[:2]-pix_p).norm(epsilon=epsilon)) 
+        return sf.V1((z_hat[:2]-pix_p).norm(epsilon=epsilon))/sigma
 
     def solve(self, A: list, 
                     X: np.array, 
@@ -94,6 +96,7 @@ class AXYBReprojectionOptimizer():
                                 K = sf.Matrix33(self.camera_matrix),
                                 pix_ps = [[sf.V2(pix) for pix in pixels] for pixels in pix_ps],
                                 tag_ps = [[sf.V3(c) for c in corners] for corners in tag_ps],
+                                sigma = sf.Scalar(float(len(pix_ps))),
                                 epsilon = sf.numeric_epsilon,
                                 )  
         self.initial_values = initial_values
@@ -113,6 +116,7 @@ class AXYBReprojectionOptimizer():
                                         f'tag_ps[{i}][{j}]',
                                         f'pix_ps[{i}][{j}]',
                                         "K",
+                                        "sigma",
                                         "epsilon"],
                                 )
                             ) 
