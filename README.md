@@ -125,7 +125,7 @@ The kinematic loop in this problem can be written as:
 ```math
 \begin{align*}
 &{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{tag} \times {}^{tag}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{base} = \mathbf{I}_{4\times4}\\
-&{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{tag} = {}^{cam}\mathbf{T}_{tag} \times {}^{base}\mathbf{T}_{cam}
+&{}^{base}\mathbf{T}_{hand} \times {}^{hand}\mathbf{T}_{tag} = {}^{base}\mathbf{T}_{cam} \times {}^{cam}\mathbf{T}_{tag}
 \end{align*}
 ```
 If we define:
@@ -282,7 +282,7 @@ base_T_hand = getHandPose()
 ```
 
 #### Formulating the Problem and Collecting Data
-The kinematic look in this problem can be written as:
+The kinematic loop in this problem can be written as:
 
 ```math
 \begin{align*}
@@ -446,7 +446,7 @@ cam_T_tag = tag_pose_tracker.getPose(camera.color_frame, tag_id=0)
 ```
 **Note:** We also could have listened to TF messages published by any kind of third-party trackers through ROS. 
 #### Formulating the Problem and Collecting Data
-The kinematic look in this problem can be written as:
+The kinematic loop in this problem can be written as:
 ```math
 \begin{align*}
 {}^{body}\mathbf{T}_{marker} \times {}^{marker}\mathbf{T}_{tag} &\times {}^{tag}\mathbf{T}_{camera} \times {}^{camera}\mathbf{T}_{body} = \mathbf{I}_{4\times4} \\
